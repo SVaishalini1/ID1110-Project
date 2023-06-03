@@ -1,6 +1,105 @@
 import math
+import time
 import pygame
-from basic_functions import rotation_about_center,text_align
+from basic_functions import resize_image, rotation_about_center, text_align
+
+# Initialize Pygame and related modules
+pygame.init()
+pygame.font.init()
+pygame.mixer.init()
+
+# Load and play the background music
+pygame.mixer.music.load('songs\\background_music.mp3')
+pygame.mixer.music.set_volume(0.07)
+pygame.mixer.music.play(-1)
+
+# Creating player car and computer car variables
+PLAYER_CAR = resize_image(pygame.image.load("imgs/player_car.png"), 0.35)
+COMPUTER_CAR = resize_image(pygame.image.load("imgs/computer_car.png"), 0.35)
+
+# Setting background variable and track variable and resizing the image used
+BACKGROUND = resize_image(pygame.image.load("imgs/green_grass.jpg"), 2.5)
+PATH = resize_image(pygame.image.load("imgs/race_track.png"), 0.9)
+
+# Defining window width and height equal to the width and height of the track
+WID, HT = PATH.get_width(), PATH.get_height()
+WINDOW = pygame.display.set_mode((WID, HT))
+
+# Setting the title of the window displayed
+pygame.display.set_caption("CAR RACING!!")
+
+# Defining variable for the track and it's mask
+RACE_TRACK_BORDER = resize_image(
+    pygame.image.load("imgs/track_outline.png"), 0.9)
+RACE_TRACK_BORDER_MASK = pygame.mask.from_surface(RACE_TRACK_BORDER)
+
+# Creating variables for finish line and it's mask
+RACE_FINISH = pygame.image.load("imgs/finish_line.png")
+RACE_FINISH_MASK = pygame.mask.from_surface(RACE_FINISH)
+RACE_FINISH_POSITION = (130, 250)
+
+# Setting the font of the texts displayed on the window
+GAME_FONT = pygame.font.SysFont("Times New Roman", 30, bold=True)
+
+# Setting FPS for a constant frame per second of the window irrespective
+# of the processor used
+FPS = 120
+
+# Defining path coordinates for the computer car so that it travels in a
+# specific path
+PATH_COORDINATES = [(155, 163), (160, 103), (134, 72), (87, 92), (66, 224), (60, 350), (62, 409), (58, 456), (79, 500), (109, 535), (285, 707), (315, 727), (347, 726), (409, 550), (423, 500), (550, 494), (596, 560), (604, 674), (654, 725),
+                    (714, 718), (733, 602), (733, 478), (714, 390), (656, 362), (461, 357), (401, 315), (434, 251), (604, 238), (701, 220), (722, 109), (598, 69), (404, 74), (325, 75), (273, 137), (284, 247), (273, 370), (190, 388), (170, 260)]
+
+# Creating a class which will contain data about different levels,reset
+# and game completion
+
+
+class GameData:
+    GAME_LEVELS = 10
+
+    # Initializing the game
+    def _init_(self, lvl=1):
+        self.level = lvl
+        self.began = False
+        self.lvl_begin_time = 0
+
+    # Creating a function which will contain information about the 1st level
+    def begin_lvl(self):
+
+        self.began = True
+        self.lvl_begin_time = time.time()
+
+    # Defining a function for moving to the next level
+    def next_lvl(self):
+
+        # Adding music for playing after a level is finished
+        if self.level < self.GAME_LEVELS:
+            level_passed_sound = pygame.mixer.Sound('songs\\next_lvl.mp3')
+            pygame.mixer.Sound.play(level_passed_sound)
+
+        self.level += 1
+        self.began = False
+
+    # Obtainig the total time since the level has begun
+    def obtain_lvl_time(self):
+        if not self.began:
+            return 0
+        return round(time.time() - self.lvl_begin_time)
+
+    # Developing a function for reset of the game
+    def reset(self):
+        if self.level <= 3:
+            self.level = 1
+        if 3 < self.level <= 6:
+            self.level = 3
+        if self.level > 6:
+            self.level = self.level
+        self.began = False
+        self.lvl_begin_time = 0
+
+    # A function for the completion of the game
+    def game_completed(self):
+        return self.level > self.GAME_LEVELS
 
 class BaseCar:
 
