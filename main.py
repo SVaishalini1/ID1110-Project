@@ -58,7 +58,7 @@ class GameData:
     GAME_LEVELS = 10
 
     # Initializing the game
-    def _init_(self, lvl=1):
+    def __init__(self, lvl=1):
         self.level = lvl
         self.began = False
         self.lvl_begin_time = 0
