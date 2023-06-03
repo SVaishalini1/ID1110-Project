@@ -186,6 +186,107 @@ class PlayerCar(BaseCar):
     def boost(self):
         if self.count <= 1:
             self.velocity = 6
+            
+# Class for computer car inheriting the base class
+class ComputerCar(BaseCar):
+
+    # Creating variables for computer car
+    IMAGE = COMPUTER_CAR
+    STARTING_POSITION = (150, 200)
+
+    # Initializing computer car's class
+    def __init__(self, max_velocity, rot_velocity, path=[]):
+        super().__init__(max_velocity, rot_velocity)
+        self.path = path
+        self.current_point = 0
+        self.velocity = max_velocity
+
+    # Defining reset function for computer car
+    def resett(self):
+        self.x, self.y = self.STARTING_POSITION
+        self.angle = 0
+        self.velocity = self.max_velocity
+        self.current_point = 0
+
+    # A function to create points on the window to get the desired path for
+    # the computer car
+    def create_points(self, window):
+        for point in self.path:
+            pygame.draw.circle(window, (255, 0, 0), point, 5)
+
+    # Function to draw created points on the window
+    def draw(self, window):
+        super().draw(window)
+        # self.create_points(window)
+
+    # Calculating angle at which computer car is currently
+    def angle_calculator(self):
+        x_target, y_target = self.path[self.current_point]
+        x_difference = x_target - self.x
+        y_difference = y_target - self.y
+
+        if y_difference == 0:
+            desired_radian_angle = math.pi / 2
+        else:
+            desired_radian_angle = math.atan(x_difference / y_difference)
+
+        if y_target > self.y:
+            desired_radian_angle += math.pi
+
+        difference_in_angle = self.angle - math.degrees(desired_radian_angle)
+        if difference_in_angle >= 180:
+            difference_in_angle -= 360
+
+        if difference_in_angle > 0:
+            self.angle -= min(self.rot_velocity, abs(difference_in_angle))
+        else:
+            self.angle += min(self.rot_velocity, abs(difference_in_angle))
+
+    # Updating path points of computer car
+    def update_path_point(self):
+        target = self.path[self.current_point]
+        rect = pygame.Rect(
+            self.x, self.y, self.img.get_width(), self.img.get_height())
+        if rect.collidepoint(*target):
+            self.current_point += 1
+
+    # Defining movement of the computer car
+    def move(self):
+        if self.current_point >= len(self.path):
+            return
+
+        self.angle_calculator()
+        self.update_path_point()
+        super().move()
+
+    # Defining next level functionality of the computer car
+    def next_lvl(self, level):
+        self.reset()
+        self.velocity = self.max_velocity + (level - 1) * 0.2
+        self.current_point = 0
+
+# A function for displaying desired images and texts on the window
+
+
+def draw(window, images, player_car, computer_car, game_info):
+    for img, pos in images:
+        window.blit(img, pos)
+
+    level_text = GAME_FONT.render(
+        f"Level {game_info.level}", 1, (255, 255, 255))
+    window.blit(level_text, (10, HT - level_text.get_height() - 70))
+
+    time_text = GAME_FONT.render(
+        f"Time: {game_info.obtain_lvl_time()}s", 1, (255, 255, 255))
+    window.blit(time_text, (10, HT - time_text.get_height() - 40))
+
+    vel_text = GAME_FONT.render(
+        f"Vel: {round(player_car.velocity, 1)}px/s", 1, (255, 255, 255))
+    window.blit(vel_text, (10, HT - vel_text.get_height() - 10))
+
+    player_car.draw(window)
+    computer_car.draw(window)
+    pygame.display.update()
 
 
 # Function which lists down some commands and resulting actions for the
@@ -214,6 +315,36 @@ def move_player(player_car):
 
     if not moved:
         player_car.speed_reduction()
+        
+# Function for handling the collisions of the cars
+def handle_collision(player_car, computer_car, game_info):
+
+    # Collision of the player car with the track
+    if player_car.collision(RACE_TRACK_BORDER_MASK) is not None:
+        player_car.bounce_back()
+
+    # Computer car crossing finishing line before player car
+    computer_finish_poi_collision = computer_car.collision(
+        RACE_FINISH_MASK, *RACE_FINISH_POSITION)
+    if computer_finish_poi_collision is not None:
+        pygame.mixer.Sound.play(pygame.mixer.Sound('songs\\lost_sound.wav'))
+        text_align(WINDOW, GAME_FONT, "You lost!")
+        pygame.display.update()
+        pygame.time.wait(5000)
+        game_info.reset()
+        player_car.reset()
+        computer_car.resett()
+
+    # Player car crossing finishing line before computer car
+    player_finish_poi_collision = player_car.collision(
+        RACE_FINISH_MASK, *RACE_FINISH_POSITION)
+    if player_finish_poi_collision is not None:
+        if player_finish_poi_collision[1] == 0:
+            player_car.bounce_back()
+        else:
+            game_info.next_lvl()
+            player_car.reset()
+            computer_car.next_lvl(game_info.level)
     
 # Variables for main game loop
 run = True
