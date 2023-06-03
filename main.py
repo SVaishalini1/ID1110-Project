@@ -45,7 +45,7 @@ GAME_FONT = pygame.font.SysFont("Times New Roman", 30, bold=True)
 # of the processor used
 FPS = 120
 
-# Defining path coordinates for the computer car so that it travels in a
+## Defining path coordinates for the computer car so that it travels in a
 # specific path
 PATH_COORDINATES = [(155, 163), (160, 103), (134, 72), (87, 92), (66, 224), (60, 350), (62, 409), (58, 456), (79, 500), (109, 535), (285, 707), (315, 727), (347, 726), (409, 550), (423, 500), (550, 494), (596, 560), (604, 674), (654, 725),
                     (714, 718), (733, 602), (733, 478), (714, 390), (656, 362), (461, 357), (401, 315), (434, 251), (604, 238), (701, 220), (722, 109), (598, 69), (404, 74), (325, 75), (273, 137), (284, 247), (273, 370), (190, 388), (170, 260)]
