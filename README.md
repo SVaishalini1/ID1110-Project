@@ -22,4 +22,4 @@ Gajula Sri Siva Sai Shashank: https://github.com/BluePheonixisHank
 Patel Joykumar Govindbhai: https://github.com/Joy2729
 
 ## Deployment
-To run the game, open the complete "ID1110-Project" folder and then run the "main.py" file.
+To run the game, open the complete "ID1110-Project-main" folder and then run the "main.py" file.
