@@ -9,17 +9,17 @@ pygame.font.init()
 pygame.mixer.init()
 
 # Load and play the background music
-pygame.mixer.music.load('ID1110-Project-main\songs\\background_music.mp3')
+pygame.mixer.music.load('songs\\background_music.mp3')
 pygame.mixer.music.set_volume(0.07)
 pygame.mixer.music.play(-1)
 
 # Creating player car and computer car variables
-PLAYER_CAR = resize_image(pygame.image.load("ID1110-Project-main/imgs/player_car.png"), 0.35)
-COMPUTER_CAR = resize_image(pygame.image.load("ID1110-Project-main/imgs/computer_car.png"), 0.35)
+PLAYER_CAR = resize_image(pygame.image.load("imgs/player_car.png"), 0.35)
+COMPUTER_CAR = resize_image(pygame.image.load("imgs/computer_car.png"), 0.35)
 
 # Setting background variable and track variable and resizing the image used
-BACKGROUND = resize_image(pygame.image.load("ID1110-Project-main/imgs/green_grass.jpg"), 2.5)
-PATH = resize_image(pygame.image.load("ID1110-Project-main/imgs/race_track.png"), 0.9)
+BACKGROUND = resize_image(pygame.image.load("imgs/green_grass.jpg"), 2.5)
+PATH = resize_image(pygame.image.load("imgs/race_track.png"), 0.9)
 
 # Defining window width and height equal to the width and height of the track
 WID, HT = PATH.get_width(), PATH.get_height()
@@ -30,11 +30,11 @@ pygame.display.set_caption("CAR RACING!!")
 
 # Defining variable for the track and it's mask
 RACE_TRACK_BORDER = resize_image(
-    pygame.image.load("ID1110-Project-main/imgs/track_outline.png"), 0.9)
+    pygame.image.load("imgs/track_outline.png"), 0.9)
 RACE_TRACK_BORDER_MASK = pygame.mask.from_surface(RACE_TRACK_BORDER)
 
 # Creating variables for finish line and it's mask
-RACE_FINISH = pygame.image.load("ID1110-Project-main/imgs/finish_line.png")
+RACE_FINISH = pygame.image.load("imgs/finish_line.png")
 RACE_FINISH_MASK = pygame.mask.from_surface(RACE_FINISH)
 RACE_FINISH_POSITION = (130, 250)
 
@@ -74,7 +74,7 @@ class GameData:
 
         # Adding music for playing after a level is finished
         if self.level < self.GAME_LEVELS:
-            level_passed_sound = pygame.mixer.Sound('ID1110-Project-main\songs\\next_lvl.mp3')
+            level_passed_sound = pygame.mixer.Sound('songs\\next_lvl.mp3')
             pygame.mixer.Sound.play(level_passed_sound)
 
         self.level += 1
@@ -327,7 +327,7 @@ def handle_collision(player_car, computer_car, game_info):
     computer_finish_poi_collision = computer_car.collision(
         RACE_FINISH_MASK, *RACE_FINISH_POSITION)
     if computer_finish_poi_collision is not None:
-        pygame.mixer.Sound.play(pygame.mixer.Sound('ID1110-Project-main\songs\\lost_sound.wav'))
+        pygame.mixer.Sound.play(pygame.mixer.Sound('songs\\lost_sound.wav'))
         text_align(WINDOW, GAME_FONT, "You lost!")
         pygame.display.update()
         pygame.time.wait(5000)
@@ -398,7 +398,7 @@ while run:
     # Game updates after completing all level
     if game_info.game_completed():
         pygame.mixer.Sound.play(
-            pygame.mixer.Sound('ID1110-Project-main\songs\\game_completed.mp3'))
+            pygame.mixer.Sound('songs\\game_completed.mp3'))
         text_align(WINDOW, GAME_FONT, "You won the game!")
         pygame.display.update()
         pygame.time.wait(3400)
